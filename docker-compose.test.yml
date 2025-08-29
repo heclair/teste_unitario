@@ -1,0 +1,28 @@
+version: "3.9"
+services:
+  postgres_test:
+    image: postgres:16-alpine
+    container_name: postgres_itest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Statement02*
+      POSTGRES_DB: bdaula_test
+    ports:
+      - "55432:5432"           # porta externa exclusiva p/ TESTES
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d bdaula_test"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis_test:
+    image: redis:alpine
+    container_name: redis_itest
+    command: ["redis-server", "--requirepass", "123"]
+    ports:
+      - "46379:6379"           # porta externa exclusiva p/ TESTES
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "123", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
